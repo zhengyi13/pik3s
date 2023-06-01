@@ -1,0 +1,41 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  labels:
+    app: sc-nginx
+  name: sc-nfs-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sc-nginx
+  template:
+    metadata:
+      labels:
+        app: sc-nginx
+    spec:
+      volumes:
+      - name: html-volume-on-nfs
+        persistentVolumeClaim:
+          claimName: my-test-nfs-pvc # from test-pvc.yaml
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: html-volume-on-nfs # template.spec.volumes[].name
+          mountPath: /usr/share/nginx/html # mount inside of container
+          #readOnly: true # if enforcing read-only on volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-with-pvc
+  annotations:
+    metallb.universe.tf/address-pool: pool-sixty-nine
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: sc-nginx
+  type: LoadBalancer
