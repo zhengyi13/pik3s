@@ -1,0 +1,27 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    meta.helm.sh/release-name: traefik
+    meta.helm.sh/release-namespace: kube-system
+  creationTimestamp: "2023-05-23T17:22:02Z"
+  generation: 2
+  labels:
+    app.kubernetes.io/instance: traefik-kube-system
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: traefik
+    helm.sh/chart: traefik-20.3.1_up20.3.0
+  name: traefik-dashboard
+  namespace: kube-system
+  resourceVersion: "429246"
+  uid: edb89dd2-10a0-4ff8-88dc-1ff8622a80a2
+spec:
+  entryPoints:
+  - traefik
+  routes:
+  - kind: Rule
+    match: Host(`traefik.cluster.lan`) && PathPrefix(`/dashboard`) || PathPrefix(`/api`)
+    services:
+    - kind: TraefikService
+      name: api@internal

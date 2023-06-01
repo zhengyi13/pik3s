@@ -1,0 +1,28 @@
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: pool-sixty-nine
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.69.0/24
+---
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: opnsense-bgp-peer
+  namespace: metallb-system
+spec:
+  myASN: 64569
+  peerASN: 65420
+  peerAddress: 192.168.3.1
+---
+apiVersion: metallb.io/v1beta1
+kind: BGPAdvertisement
+metadata:
+  name: opnsense-bpg-advertisement
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - pool-sixty-nine
